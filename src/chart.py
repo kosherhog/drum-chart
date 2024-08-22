@@ -47,7 +47,7 @@ def parse_markup(text):
     # Customize the font for the paragraph
     courier_style.fontName = 'Courier'  # Set the font to Courier
     # courier_style.fontSize = 12  # Adjust the font size as needed
-    
+
     # Example markup parsing logic
     parts = re.split(r"(\[break\])", text)
     parsed_parts = []
@@ -131,7 +131,7 @@ def create_pdf(parsed_parts, filename):
 
 def main():
     parsed_parts = parse_markup(markup_text)
-    create_pdf(parsed_parts, "output.pdf")
+    create_pdf(parsed_parts, "../build/output.pdf")
     return 0
 
 
