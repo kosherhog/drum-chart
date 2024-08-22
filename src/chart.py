@@ -23,6 +23,48 @@ Row 2
 Row 3
 Row 4
 [/table]
+[table]
+Row 1
+Row 2
+Row 3
+Row 4
+[/table]
+[table]
+Row 1
+Row 2
+Row 3
+Row 4
+[/table]
+[table]
+Row 1
+Row 2
+Row 3
+Row 4
+[/table]
+[table]
+Row 1
+Row 2
+Row 3
+Row 4
+[/table]
+[table]
+Row 1
+Row 2
+Row 3
+Row 4
+[/table]
+[table]
+Row 1
+Row 2
+Row 3
+Row 4
+[/table]
+[table]
+Row 1
+Row 2
+Row 3
+Row 4
+[/table]
 [break]
 [table]
 Row A
@@ -85,6 +127,7 @@ def create_table(items) -> Table:
                 ("BACKGROUND", (0, 0), (0, -1), colors.grey),
                 ("TEXTCOLOR", (0, 0), (0, -1), colors.whitesmoke),
                 ("ALIGN", (1, 0), (-1, -1), "CENTER"),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
                 ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
                 ("FONTNAME", (1, 0), (-1, -1), "Courier"),
                 # ('BOTTOMPADDING', (0, 0), (0, -1), 12),
@@ -113,7 +156,7 @@ def create_pdf(parsed_parts, filename):
 
     for part in parsed_parts:
         print(f"part {part}")
-        if part == "[break]":
+        if part == "[break]" or len(items) > 7:
 
             # dump the table we already have
             elements.append(create_table(items))
