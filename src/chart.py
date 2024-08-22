@@ -36,7 +36,7 @@ def parse_markup(text):
         if part == '[break]':
             parsed_parts.append(part)
         else:
-            tables = re.findall(r'\[table\]\[/table\]', part, re.DOTALL)
+            tables = re.findall(r'\[table\][^\[]*\[/table\]', part, re.DOTALL)
             print(tables)
             for table in tables:
                 rows = table.strip().split('\n')
@@ -52,9 +52,10 @@ def create_pdf(parsed_parts, filename):
         if part == '[break]':
             elements.append(Spacer(1, 12))  # Add a spacer for the line break
         else:
-            column_widths = []
-            row_heights = []
-            table = Table([part], colWidths=column_widths, rowHeights=row_heights)
+            column_widths = None
+            row_heights = None
+            columns = list(zip(*part))
+            table = Table(columns, colWidths=column_widths, rowHeights=row_heights)
             table.setStyle(TableStyle([
                 ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
