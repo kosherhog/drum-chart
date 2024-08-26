@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			const header = `X:1\\nK:C clef=perc\\n`;
 			// Set the webview's HTML content
-			var abc = header + `M:4/4\\ne[Fe]!open!ee|e[Fe]ee|\\ne[Fe]ee||` + `\\n`; // `X:1\\nK:D\\nDD AA|BBA2|\\n`
+			var abc = header + `M:4/4\\ne[Fe]!open!ee|e[Fe]ee|e[Fce]ee||` + `\\n`; // `X:1\\nK:D\\nDD AA|BBA2|\\n`
 			panel.webview.html = getWebviewContent(abc); // editor.document.getText()
 			// abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
 		}
