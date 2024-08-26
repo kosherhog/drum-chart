@@ -29,7 +29,8 @@ export function activate(context: vscode.ExtensionContext) {
                 );
 
                 // Set the webview's HTML content
-                panel.webview.html = getWebviewContent(editor.document.getText());
+                panel.webview.html = getWebviewContent("some random text"); // editor.document.getText()
+				abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
 			}
 		vscode.window.showInformationMessage('Hello World from drum-chart!');
 	});
@@ -42,7 +43,6 @@ export function deactivate() {}
 
 
 function getWebviewContent(content: string): string {
-	var abc = abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,7 +51,11 @@ function getWebviewContent(content: string): string {
     <title>Webview</title>
 </head>
 <body>
-	<pre>${abc}</pre>
+	<div id="paper"></div>
+	<script src="https://cdn.jsdelivr.net/npm/abcjs@6.2.0/dist/abcjs-basic-min.js"></script>
+    <script>
+	var abc = abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
+	</script>
     <pre>${content}</pre>
 </body>
 </html>`;
