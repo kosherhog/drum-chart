@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webview</title>
+</head>
+
+<body>
+    <pre>${content}</pre>
+	<div id="paper">Existing content</div>
+	<script src="https://cdn.jsdelivr.net/npm/abcjs@6.2.0/dist/abcjs-basic-min.js"></script>
+	<script>
+		ABCJS.renderAbc("paper", "${content}");
+	</script>
+</body>
+</html>`;
