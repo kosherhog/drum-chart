@@ -3,8 +3,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as abcjs from 'abcjs';
-
-// @ts-ignore
 import { JSDOM } from 'jsdom';
 
 
@@ -39,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 			// Set the webview's HTML content
 			var abc = header + `M:4/4\\ne[Fe]!open!ee|e[Fe]ee|e[FAe]ee||` + `\\n`; // `X:1\\nK:D\\nDD AA|BBA2|\\n`
 			console.log("calling getWV2");
-			panel.webview.html = getWebviewContent(abc); // editor.document.getText()
+			panel.webview.html = getWebviewContent2(abc); // editor.document.getText()
 			// abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
 		}
 		vscode.window.showInformationMessage('Hello World from drum-chart!');
@@ -62,12 +60,13 @@ function getWebviewContent2(content: string): string {
 		
 		<body>
 			<div id="paper">Existing content</div>
+			This is the body
 		</body>
 		</html>`;
-	return "";
-//	const dom = new JSDOM(text);
-//	var document = dom.window.document;
-//	return document.textContent === null ? "" : document.textContent;
+    const dom = new JSDOM(text);
+	var document = dom.window.document;
+	console.log(document.textContent); // not sure why this is empty - something to work on tomorrow
+	return document.textContent === null ? "" : document.textContent;
 }
 
 
