@@ -47,6 +47,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "abcjs": "^6.4.2"
+    "abcjs": "^6.4.2",
+    "jsdom": "^25.0.0",
+    "npm-check-updates": "^17.1.0"
   }
 }

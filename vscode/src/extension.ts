@@ -2,10 +2,16 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as abcjs from 'abcjs';
+
+// @ts-ignore
+import { JSDOM } from 'jsdom';
+
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
@@ -32,6 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const header = `X:1\\nK:C clef=perc\\n`;
 			// Set the webview's HTML content
 			var abc = header + `M:4/4\\ne[Fe]!open!ee|e[Fe]ee|e[FAe]ee||` + `\\n`; // `X:1\\nK:D\\nDD AA|BBA2|\\n`
+			console.log("calling getWV2");
 			panel.webview.html = getWebviewContent(abc); // editor.document.getText()
 			// abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
 		}
@@ -43,6 +50,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export function deactivate() { }
+
+function getWebviewContent2(content: string): string {
+	var text = `<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Webview</title>
+		</head>
+		
+		<body>
+			<div id="paper">Existing content</div>
+		</body>
+		</html>`;
+	return "";
+//	const dom = new JSDOM(text);
+//	var document = dom.window.document;
+//	return document.textContent === null ? "" : document.textContent;
+}
 
 
 function getWebviewContent(content: string): string {
