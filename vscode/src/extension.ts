@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
 			panel.webview.html = getWebviewContent2(abc); // editor.document.getText()
 			// abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
 		}
-		vscode.window.showInformationMessage('Hello World from drum-chart!');
+		// vscode.window.showInformationMessage('Hello World from drum-chart!');
 	});
 
 	context.subscriptions.push(disposable);
@@ -50,23 +50,37 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() { }
 
 function getWebviewContent2(content: string): string {
-	var text = `<!DOCTYPE html>
-		<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Webview</title>
-		</head>
+	const text = `<!DOCTYPE html><body><DIV id='abc'></DIV></body>`;
+
+	try {
+		const dom1 = new JSDOM(`<!DOCTYPE html><p id='abc'>Hello world</p>`);
+		console.log("DOM1 " + dom1.window.document.querySelector("p").textContent); // "Hello world"
+
+		var dom2 = new JSDOM(`<!DOCTYPE html>Hi There<DIV id='abc'>Hello world</DIV>`,{ pretendToBeVisual: true });
+		console.log("After JSDOM " + dom2.window.document.querySelector("div").textContent); // not sure why this is empty - something to work on tomorrow
+
+		global.document = dom2.window.document;
+		global.navigator = dom2.window.navigator;
 		
-		<body>
-			<div id="paper">Existing content</div>
-			This is the body
-		</body>
-		</html>`;
-    const dom = new JSDOM(text);
-	var document = dom.window.document;
-	console.log(document.textContent); // not sure why this is empty - something to work on tomorrow
-	return document.textContent === null ? "" : document.textContent;
+		var el = dom2.window.document.getElementById("abc") as HTMLElement;
+		console.log("EL is " + el.id);
+		if (el) {
+			console.log(`starting rendering ${content}`);
+			console.log(`EL Type ${typeof(el)}`);
+			abcjs.renderAbc(el, content);
+			console.log(`Done rendering ${content}`);
+		}
+		else {
+			console.log("No EL");
+		}
+		console.log(`Serializing now`);
+		console.log(dom2.window.document.body.innerHTML); // not sure why this is empty - something to work on tomorrow
+		return dom2.serialize();
+	}
+	catch (error) {
+		console.log("Error: " + error + " " + new Error().stack);
+	}
+	return "";
 }
 
 
