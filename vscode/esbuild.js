@@ -1,4 +1,6 @@
 const esbuild = require("esbuild");
+const fs = require('fs');
+const path = require('path');
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
@@ -26,7 +28,8 @@ const esbuildProblemMatcherPlugin = {
 async function main() {
 	const ctx = await esbuild.context({
 		entryPoints: [
-			'src/extension.ts'
+			'src/extension.ts',
+			'res/*',
 		],
 		bundle: true,
 		format: 'cjs',
@@ -34,14 +37,26 @@ async function main() {
 		sourcemap: !production,
 		sourcesContent: false,
 		platform: 'node',
-		outfile: 'dist/extension.js',
+		outdir: 'dist',
 		external: ['vscode'],
 		logLevel: 'silent',
 		plugins: [
 			/* add to the end of plugins array */
 			esbuildProblemMatcherPlugin,
 		],
+		loader: {
+			'.html' : 'text', 
+		}
 	});
+
+	// Copy additional files
+	const copyFile = (src, dest) => {
+		fs.copyFileSync(src, dest);
+	};
+	
+	copyFile('node_modules/jsdom/lib/jsdom/living/xhr/xhr-sync-worker.js', 'dist/xhr-sync-worker.js');
+	copyFile('node_modules/abcjs/dist/abcjs-basic-min.js', 'dist/abcjs-basic-min.js');
+
 	if (watch) {
 		await ctx.watch();
 	} else {

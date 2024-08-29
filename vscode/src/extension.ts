@@ -33,11 +33,15 @@ export function activate(context: vscode.ExtensionContext) {
 				} // Webview options. More on these later.
 			);
 
+			const scriptUri = panel.webview.asWebviewUri(
+				vscode.Uri.file(path.join(context.extensionPath, 'dist', 'abcjs-basic-min.js'))
+			  );
+
 			const header = `X:1\\nK:C clef=perc\\n`;
 			// Set the webview's HTML content
 			var abc = header + `M:4/4\\ne[Fe]!open!ee|e[Fe]ee|e[FAe]ee||` + `\\n`; // `X:1\\nK:D\\nDD AA|BBA2|\\n`
 			console.log("calling getWV2");
-			panel.webview.html = getWebviewContent2(abc); // editor.document.getText()
+			panel.webview.html = getWebviewContent(scriptUri.toString(), abc); // editor.document.getText()
 			// abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
 		}
 		// vscode.window.showInformationMessage('Hello World from drum-chart!');
@@ -49,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
 // This method is called when your extension is deactivated
 export function deactivate() { }
 
-function getWebviewContent2(content: string): string {
+function getWebviewContent2(uri: string, content: string): string {
 	const text = `<!DOCTYPE html><body><DIV id='abc'></DIV></body>`;
 
 	try {
@@ -59,8 +63,8 @@ function getWebviewContent2(content: string): string {
 		var dom2 = new JSDOM(`<!DOCTYPE html>Hi There<DIV id='abc'>Hello world</DIV>`,{ pretendToBeVisual: true });
 		console.log("After JSDOM " + dom2.window.document.querySelector("div").textContent); // not sure why this is empty - something to work on tomorrow
 
-		global.document = dom2.window.document;
-		global.navigator = dom2.window.navigator;
+		// global.document = dom2.window.document;
+		// global.navigator = dom2.window.navigator;
 		
 		var el = dom2.window.document.getElementById("abc") as HTMLElement;
 		console.log("EL is " + el.id);
@@ -84,7 +88,8 @@ function getWebviewContent2(content: string): string {
 }
 
 
-function getWebviewContent(content: string): string {
+function getWebviewContent(uri: string, content: string): string {
+	console.log(`URI: ${uri}`);
 	return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,7 +101,7 @@ function getWebviewContent(content: string): string {
 <body>
     <pre>${content}</pre>
 	<div id="paper">Existing content</div>
-	<script src="https://cdn.jsdelivr.net/npm/abcjs@6.2.0/dist/abcjs-basic-min.js"></script>
+	<script src="${uri}"></script>
 	<script>
 		ABCJS.renderAbc("paper", "${content}", { minSpacing: 5, maxSpacing: 5} );
 	</script>
