@@ -34,7 +34,3 @@ function getWebviewContent2(uri: string, content: string): string {
 	}
 	return "";
 }
-
-
-
-*/

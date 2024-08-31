@@ -73,6 +73,13 @@ C:New York
 N:Jane
 A:25
 C:Los Angeles
+
+N:Bob
+C:Seattle
+
+A:30
+C:Denver
+
 `;
 
 	const table = textToHtmlTable(text);
@@ -84,9 +91,9 @@ function textToHtmlTable(text: string): string
 {
 	type KVP = { [key: string]: string };
 	const lines = text.trim().split('\n');
-	const rows: KVP = {};
-	const column: KVP = {}; // this will hold a single column
-	const columns: KVP[] = [];
+	let rows: KVP = {};
+	let column: KVP = {}; // this will hold a single column
+	let columns: KVP[] = [];
 
 
 	let isRowDefinition = true;
@@ -102,6 +109,7 @@ function textToHtmlTable(text: string): string
 			else
 			{
 				columns.push(column);
+				column = {};
 			}
 		} else if (isRowDefinition)
 		{
@@ -114,8 +122,13 @@ function textToHtmlTable(text: string): string
 		}
 	}
 
+	if (Object.keys(column).length !== 0) 
+	{
+		columns.push(column);
+	}
+
 	// for each abbreviation in every column lay down a row
-	let html = '<table border="1"><thead><tr>';
+	let html = '<table border="1"><tr>';
 	for (const abbreviation in rows)
 	{
 		// the first column in the row is always the row name
@@ -123,24 +136,16 @@ function textToHtmlTable(text: string): string
 		columns.forEach(column => {
 			if (column[abbreviation])
 			{
-				// add a row
+				html += `<td>${column[abbreviation]}</td>`;
+			}
+			else
+			{
+				html += `<td></td>`;
 			}
 		});
+		html += `</tr>`; // end the row
 	}
-	html += '</tr></thead><tbody>';
-
-	const numRows = Math.max(...Object.values(columns).map(col => col.length));
-	for (let i = 0; i < numRows; i++)
-	{
-		html += '<tr>';
-		for (const abbreviation in rows)
-		{
-			html += `<td>${columns[abbreviation][i] || ''}</td>`;
-		}
-		html += '</tr>';
-	}
-
-	html += '</tbody></table>';
+	html += '</table>';
 	return html;
 }
 
