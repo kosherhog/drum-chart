@@ -40,8 +40,12 @@ export function activate(context: vscode.ExtensionContext)
 			const header = `X:1\\nK:C clef=perc\\n`;
 			// Set the webview's HTML content
 			var abc = header + `M:4/4\\ne[Fe]!open!ee|e[Fe]ee|e[FAe]ee||` + `\\n`; // `X:1\\nK:D\\nDD AA|BBA2|\\n`
-			console.log("calling getWV2");
-			const table = testTH();
+			
+			// get the current editors text and parse it
+			const text = editor.document.getText();
+			const table = textToHtmlTable(text);
+			console.log(table);
+
 			panel.webview.html = getWebviewContent(scriptUri.toString(), abc, table); // editor.document.getText()
 			// abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
 		}
@@ -90,41 +94,58 @@ C:Denver
 function textToHtmlTable(text: string): string
 {
 	type KVP = { [key: string]: string };
-	const lines = text.trim().split('\n');
 	let rows: KVP = {};
-	let column: KVP = {}; // this will hold a single column
 	let columns: KVP[] = [];
 
+	// break the file up into blocks split by blank lines
+	const blocks = text.split(/\n\s*\n/).map(block => block.trim()).filter(block => block.length > 0);
 
-	let isRowDefinition = true;
-
-	for (const line of lines)
+	// block 1 is the file header, block 2 is the row definition, block 3-n is the content
+	if (blocks.length < 2)
 	{
-		if (line.trim() === '')
+		return `Block length too short ${blocks.length}`;
+	}
+
+	let count = 0;
+	for(const block of blocks)
+	{
+		console.log(`Block: ${block}\n`);
+		const lines = text.trim().split('\n');
+
+		if (count === 0)
 		{
-			if (isRowDefinition)
+			if (lines.length && lines[0] === '%drum chart')
 			{
-				isRowDefinition = false;
+				count++;
+				continue;
 			}
-			else
-			{
-				columns.push(column);
-				column = {};
-			}
-		} else if (isRowDefinition)
+			return `<p>Missing header</p>`;
+		}
+
+		// parse the header
+		if (count === 1)
 		{
-			const [name, abbreviation] = line.split(':').map(s => s.trim());
-			rows[abbreviation] = name;
-		} else
+			for (const line of lines)
+			{
+				const [name, abbreviation] = line.split(':').map(s => s.trim());
+				rows[abbreviation] = name;	
+			}
+			console.log(`Rows: ${rows.toString()}\n`);			
+			count++;
+			continue;
+		}
+
+
+		// parse everything else
+		let column: KVP = {}; // this will hold a single column
+		for (const line of lines)
 		{
 			const [abbreviation, value] = line.split(':').map(s => s.trim());
 			column[abbreviation] = value;
 		}
-	}
-
-	if (Object.keys(column).length !== 0) 
-	{
+		console.log(`Column: ${column}\n`);			
 		columns.push(column);
+		count++;
 	}
 
 	// for each abbreviation in every column lay down a row
