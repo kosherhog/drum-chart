@@ -15,7 +15,15 @@
     "commands": [
       {
         "command": "drum-chart.chartme",
-        "title": "Drum Chart"
+        "title": "Drum Chart Hello World"
+      },
+      {
+        "command": "drum-chart.horz-chart",
+        "title": "Drum Chart Horizontal"
+      },
+      {
+        "command": "drum-chart.vert-chart",
+        "title": "Drum Chart Vertical"
       }
     ]
   },
