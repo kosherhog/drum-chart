@@ -3,6 +3,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+type KVP = { [key: string]: string };
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext)
@@ -39,12 +41,12 @@ export function activate(context: vscode.ExtensionContext)
 
 			const header = `X:1\\nK:C clef=perc\\n`;
 			// Set the webview's HTML content
-			var abc = header + `M:4/4\\ne[Fe]!open!ee|e[Fe]ee|e[FAe]ee||` + `\\n`; // `X:1\\nK:D\\nDD AA|BBA2|\\n`
+			var abc = header + `T:Riff1\\nM:4/4\\ne[Fe]!open!ee|e[Fe]ee|e[FAe]ee||` + `\\n`; // `X:1\\nK:D\\nDD AA|BBA2|\\n`
 			
 			// get the current editors text and parse it
 			const text = editor.document.getText();
 			const table = textToHtmlTable(text);
-			console.log(table);
+			// console.log(table);
 
 			panel.webview.html = getWebviewContent(scriptUri.toString(), abc, table); // editor.document.getText()
 			// abcjs.renderAbc("paper", "X:1\nK:D\nDD AA|BBA2|\n");
@@ -93,9 +95,9 @@ C:Denver
 
 function textToHtmlTable(text: string): string
 {
-	type KVP = { [key: string]: string };
 	let rows: KVP = {};
 	let columns: KVP[] = [];
+	let html = "";
 
 	// break the file up into blocks split by blank lines
 	const blocks = text.split(/\n\s*\n/).map(block => block.trim()).filter(block => block.length > 0);
@@ -110,7 +112,7 @@ function textToHtmlTable(text: string): string
 	for(const block of blocks)
 	{
 		console.log(`Block: ${block}\n`);
-		const lines = text.trim().split('\n');
+		const lines = block.trim().split('\n');
 
 		if (count === 0)
 		{
@@ -129,7 +131,15 @@ function textToHtmlTable(text: string): string
 			{
 				const [name, abbreviation] = line.split(':').map(s => s.trim());
 				rows[abbreviation] = name;	
+				console.log(`Name: ${name} Abb: ${abbreviation}\n`);
 			}
+			console.log('Rows\n');
+			for (let key in rows) {
+				if (rows.hasOwnProperty(key)) {
+					console.log(`${key}: ${rows[key]}`);
+				}
+			}
+		
 			console.log(`Rows: ${rows.toString()}\n`);			
 			count++;
 			continue;
@@ -143,11 +153,26 @@ function textToHtmlTable(text: string): string
 			const [abbreviation, value] = line.split(':').map(s => s.trim());
 			column[abbreviation] = value;
 		}
-		console.log(`Column: ${column}\n`);			
 		columns.push(column);
+
+		// how many columns have we collected? 
+		if (columns.length > 4)
+		{
+			html += generateTable(rows,columns) + "<br><br>";
+			columns = [];
+		}	
 		count++;
 	}
+	if (columns.length > 0)
+	{
+		html += generateTable(rows,columns) + "<br><br>";
+	}
+	return html;
+}
 
+
+function generateTable(rows: KVP, columns: KVP[]) : string
+{
 	// for each abbreviation in every column lay down a row
 	let html = '<table border="1"><tr>';
 	for (const abbreviation in rows)
@@ -169,7 +194,6 @@ function textToHtmlTable(text: string): string
 	html += '</table>';
 	return html;
 }
-
 
 // okay - the content below is about transforming this from string to loading files - this is all to-do
 
