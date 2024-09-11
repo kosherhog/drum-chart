@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext)
 
 		runExtension(context, false);
 
-		vscode.window.showInformationMessage('Hello World from drum-chart!');
+		vscode.window.showInformationMessage('Hello World from horz-chart!');
 	});
 
 	let command2 = vscode.commands.registerCommand('drum-chart.vert-chart', () =>
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext)
 
 		runExtension(context, true);
 
-		vscode.window.showInformationMessage('Hello World from drum-chart!');
+		vscode.window.showInformationMessage('Hello World from vert-chart!');
 	});
 
 	let command3 = vscode.commands.registerCommand('drum-chart:chartme', () =>
@@ -164,9 +164,10 @@ function textToVerticalTable(text: string): string
 
 		count++;
 	}
+
 	if (columns.length > 0)
 	{
-		generateHorzTable(rows, columns);
+		html = generateVertTable(rows, columns);
 	}
 	return html;
 }
@@ -238,19 +239,19 @@ function textToHorizontalTable(text: string): string
 		// how many columns have we collected? 
 		if (columns.length > 4)
 		{
-			html += generateTable(rows, columns) + "<br><br>";
+			html += generateHorzTable(rows, columns) + "<br><br>";
 			columns = [];
 		}
 		count++;
 	}
 	if (columns.length > 0)
 	{
-		html += generateTable(rows, columns) + "<br><br>";
+		html += generateHorzTable(rows, columns) + "<br><br>";
 	}
 	return html;
 }
 
-function generateHorzTable(rows: KVP, columns: KVP[]): string
+function generateVertTable(rows: KVP, columns: KVP[]): string
 {
 	// for each abbreviation in every column lay down a row
 	let html = '<table border="1">';
@@ -280,14 +281,15 @@ function generateHorzTable(rows: KVP, columns: KVP[]): string
 			}
 			cnt++;
 		}
-		html += `</tr>`; // end the row
+		html += `</table></td></tr>`; // end the row
 	});
 	html += '</table>';
+	console.log(`vertical ${html}`);
 	return html;
 }
 
 
-function generateTable(rows: KVP, columns: KVP[]): string
+function generateHorzTable(rows: KVP, columns: KVP[]): string
 {
 	// for each abbreviation in every column lay down a row
 	let html = '<table border="1"><tr>';

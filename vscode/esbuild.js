@@ -29,7 +29,6 @@ async function main() {
 	const ctx = await esbuild.context({
 		entryPoints: [
 			'src/extension.ts',
-			'res/*',
 		],
 		bundle: true,
 		format: 'cjs',
@@ -51,11 +50,16 @@ async function main() {
 
 	// Copy additional files
 	const copyFile = (src, dest) => {
+		if (!fs.existsSync('dist'))
+		{
+			fs.mkdirSync('dist');
+		}
 		fs.copyFileSync(src, dest);
 	};
 	
 	copyFile('node_modules/jsdom/lib/jsdom/living/xhr/xhr-sync-worker.js', 'dist/xhr-sync-worker.js');
 	copyFile('node_modules/abcjs/dist/abcjs-basic-min.js', 'dist/abcjs-basic-min.js');
+	copyFile('res/view.html','dist/view.html');
 
 	if (watch) {
 		await ctx.watch();
