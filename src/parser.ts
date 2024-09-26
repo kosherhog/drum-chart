@@ -11,17 +11,17 @@ enum TokenKind {
 }
 
 const tokenizer = buildLexer([
-    [true, /^(\S[^:]*)/g, TokenKind.Label],
+    [true, /^\S[^:]*/g, TokenKind.Label],
     [true, /^(\S[^\r\n]*)\r?\n/g, TokenKind.Value],
-    [true, /^(\S)/g, TokenKind.Shortcut],
+    [true, /^\S/g, TokenKind.Shortcut],
     [true, /^\r?\n/g, TokenKind.Blank],
 ]);
 
 function printme(value: any) {
-    console.log(value);
+    console.log(`Value ${value}`);
 }
 
-const header = apply(str("%drumchart"),printme);
+const header = apply(str('%drum chart'),printme);
 const definition = seq(tok(TokenKind.Label),str(':'),tok(TokenKind.Shortcut));
 const def_block = rep(definition);
 
