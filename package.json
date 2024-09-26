@@ -58,6 +58,7 @@
   "dependencies": {
     "abcjs": "^6.4.2",
     "jsdom": "^25.0.0",
-    "npm-check-updates": "^17.1.0"
+    "npm-check-updates": "^17.1.0",
+    "typescript-parsec": "^0.3.4"
   }
 }

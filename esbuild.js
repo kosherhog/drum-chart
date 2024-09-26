@@ -29,6 +29,7 @@ async function main() {
 	const ctx = await esbuild.context({
 		entryPoints: [
 			'src/extension.ts',
+			'src/parser.ts'
 		],
 		bundle: true,
 		format: 'cjs',
