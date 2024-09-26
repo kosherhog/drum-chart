@@ -1,7 +1,13 @@
-%drum chart
+%drumchart
 
-Song Form:F
-Bars:B
-Instructions:I
-Lyrics:L
-Riff:R
+F:Song Form
+B:Bars
+I:Instructions
+L:Lyrics
+R:Riff
+
+F:Song Form
+B:Bars
+I:Instructions
+L:Lyrics
+R:Riff
