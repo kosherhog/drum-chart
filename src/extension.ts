@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext)
 		vscode.window.showInformationMessage('Hello World from vert-chart!');
 	});
 
-	let command3 = vscode.commands.registerCommand('drum-chart:chartme', () =>
+	let command3 = vscode.commands.registerCommand('drum-chart.chartme', () =>
 	{
 		console.log('Running chartme');
 	});
