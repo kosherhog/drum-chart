@@ -17,7 +17,7 @@ enum TokenKind
 const tokenizer = buildLexer([
     [true, /^#[A-Za-z_]\w*/g, TokenKind.Tag], // #tag
     [true, /^[^`\-#%\s][^`\r\n]+/g, TokenKind.String], // string that doesn't start with `#%
-    [true, /^`.*`/g, TokenKind.QString], // quoted string in ``
+    [true, /^`[^`]*`/g, TokenKind.QString], // quoted string in ``
     [true, /^%[A-Za-z_]+/g, TokenKind.Directive], // %directive
     [true, /^---/g, TokenKind.Break], // break ---]
     [false, /^\s+/g, TokenKind.Space], // whitespace
