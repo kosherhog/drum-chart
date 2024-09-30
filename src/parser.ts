@@ -1,31 +1,57 @@
 import { readFileSync } from 'fs';
-import { Token, TokenError } from 'typescript-parsec';
+import { alt_sc, Token, TokenError } from 'typescript-parsec';
 import { buildLexer, expectEOF, expectSingleResult, rule } from 'typescript-parsec';
-import { alt, apply, kmid, lrec_sc, rep_sc, rep, seq, str, tok } from 'typescript-parsec';
+import { alt, apply, kmid, lrec_sc, opt_sc, rep_sc, rep, seq, str, tok } from 'typescript-parsec';
 
 enum TokenKind
 {
     Directive,
-    Identifier,
+    Tag,
     String,
-    EOL,
+    QString,
+    Column,
+    Break,
+    Space,
 }
 
 const tokenizer = buildLexer([
-    [true, /^[A-Za-z_]\w*/g, TokenKind.Identifier],
-    [true, /^:[^\r\n]+\r?\n/g, TokenKind.String], // String is content between : and LF
-    [true, /^\r?\n/g, TokenKind.EOL],
-    [true, /^%\w+/g, TokenKind.Directive],
+    [true, /^#[A-Za-z_]\w*/g, TokenKind.Tag], // #tag
+    [true, /^[^`\-#%\s][^`\r\n]+/g, TokenKind.String], // string that doesn't start with `#%
+    [true, /^`.*`/g, TokenKind.QString], // quoted string in ``
+    [true, /^%[A-Za-z_]+/g, TokenKind.Directive], // %directive
+    [true, /^---/g, TokenKind.Break], // break ---]
+    [false, /^\s+/g, TokenKind.Space], // whitespace
 ]);
 
-function printme(value: [Token<TokenKind>, Token<TokenKind>]): string
+const header = apply(str<TokenKind>('%drumchart'), printme);
+const directive = apply(seq(tok(TokenKind.Directive),opt_sc(tok(TokenKind.String))),printdir);
+const directive_block = seq(rep_sc(directive),tok(TokenKind.Break));
+
+const instruction = seq(apply(tok(TokenKind.Tag),printme),apply(alt_sc(tok(TokenKind.String),tok(TokenKind.QString)),printme));
+const instruction_block = seq(rep_sc(instruction),tok(TokenKind.Break));
+
+const chart = seq(header, rep_sc(alt_sc(directive_block,instruction_block)));
+
+function printdir(value : [Token<TokenKind>, Token<TokenKind> | undefined]) : string
 {
-    console.log(`Value ${value[0].kind} ${value[0].text}`);
-    if (value[1].kind !== TokenKind.EOL)
+    console.log(`Directive ${value[0].kind} ${value[0].text}`);
+    if (value[1] !== undefined)
     {
-        console.log(`String ${value[1].kind} ${value[1].text}`);
+        console.log(`DVal ${value[1].kind} ${value[1].text}`);
     }
-    return value[0].text;
+    return "";
+}
+
+function printme(value: Token<TokenKind>): string
+{
+    console.log(`Value ${value.kind} '${value.text}'`);
+    return value.text;
+}
+
+function get_columns(value: [Token<TokenKind>, Token<TokenKind>, [Token<TokenKind>,Token<TokenKind>][]]) : string
+{
+    console.log(value);
+    return "";
 }
 
 function printeol(value: Token<TokenKind>): string
@@ -35,11 +61,6 @@ function printeol(value: Token<TokenKind>): string
     console.log(`EOL ${value.next}`);
     return value.text;
 }
-const header = apply(seq(str<TokenKind>('%drumchart'), tok(TokenKind.EOL)), printme);
-const definition = apply(seq(tok(TokenKind.Identifier), tok(TokenKind.String)), printme);
-const def_block = seq(rep_sc(definition), rep_sc(apply(tok(TokenKind.EOL), printeol)));
-
-const chart = seq(header, rep_sc(tok(TokenKind.EOL)), rep_sc(def_block));
 
 const input = readFileSync('samples/verysmall.drum');
 

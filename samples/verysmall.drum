@@ -1,13 +1,21 @@
 %drumchart
 
-F:Song Form
-B:Bars
-I:Instructions
-L:Lyrics
-R:Riff
+#F Song Form
+#B `Bars`
+#I `Instructions`
+#L `Lyrics`
+#R `Riff`
+---
+%map 1 F,B,I
+$map 2 L,R
+---
+#F Song Form
+#B Bars
+#I Instructions
+#L Lyrics
+#R `Riff
+    more Riff
+    even more riff`
+---
 
-F2:Song Form
-B2:Bars
-I2:Instructions
-L2:Lyrics
-R2:Riff
+
