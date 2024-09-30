@@ -9,6 +9,7 @@
 %map 1 F,B,I
 %map 2 L,R
 ---
+
 #F Song Form
 #B Bars
 #I Instructions
@@ -18,4 +19,11 @@
     even more riff`
 ---
 
-
+#F Song Form
+#B Bars
+#I Instructions
+#L Lyrics
+#R `Riff
+    more Riff
+    even more riff`
+---

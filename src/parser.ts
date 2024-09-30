@@ -23,16 +23,46 @@ const tokenizer = buildLexer([
     [false, /^\s+/g, TokenKind.Space], // whitespace
 ]);
 
-const header = apply(str<TokenKind>('%drumchart'), printme);
-const directive = apply(seq(tok(TokenKind.Directive),opt_sc(tok(TokenKind.String))),printdir);
-const directive_block = seq(rep_sc(directive),tok(TokenKind.Break));
+const header =
+    apply(
+        str<TokenKind>('%drumchart'),
+        printme
+    );
 
-const instruction = seq(apply(tok(TokenKind.Tag),printme),apply(alt_sc(tok(TokenKind.String),tok(TokenKind.QString)),printme));
-const instruction_block = seq(rep_sc(instruction),tok(TokenKind.Break));
+const directive = 
+    apply
+        (seq(
+            tok(
+                TokenKind.Directive), 
+                opt_sc(tok(TokenKind.String)
+            )
+        ), 
+        printdir
+    );
 
-const chart = seq(header, rep_sc(alt_sc(directive_block,instruction_block)));
+const directive_block = 
+    seq(
+        rep_sc(directive), 
+        apply(tok(TokenKind.Break),breakcount)
+    );
 
-function printdir(value : [Token<TokenKind>, Token<TokenKind> | undefined]) : string
+const instruction = seq(apply(tok(TokenKind.Tag), printme), apply(alt_sc(tok(TokenKind.String), tok(TokenKind.QString)), printme));
+const instruction_block = 
+    seq(
+        rep_sc(instruction), 
+        apply(tok(TokenKind.Break),breakcount)
+    );
+
+let breaks = 0;
+const chart = seq(header, rep_sc(alt_sc(directive_block, instruction_block)));
+
+function breakcount(value: Token<TokenKind>) : string
+{
+    console.log(`*** Breaks ${breaks++}`);
+    return value.text;
+}
+
+function printdir(value: [Token<TokenKind>, Token<TokenKind> | undefined]): string
 {
     console.log(`Directive ${value[0].kind} ${value[0].text}`);
     if (value[1] !== undefined)
@@ -48,7 +78,7 @@ function printme(value: Token<TokenKind>): string
     return value.text;
 }
 
-function get_columns(value: [Token<TokenKind>, Token<TokenKind>, [Token<TokenKind>,Token<TokenKind>][]]) : string
+function get_columns(value: [Token<TokenKind>, Token<TokenKind>, [Token<TokenKind>, Token<TokenKind>][]]): string
 {
     console.log(value);
     return "";
