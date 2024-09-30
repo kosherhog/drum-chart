@@ -7,7 +7,7 @@
 #R `Riff`
 ---
 %map 1 F,B,I
-$map 2 L,R
+%map 2 L,R
 ---
 #F Song Form
 #B Bars
