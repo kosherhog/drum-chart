@@ -1,10 +1,10 @@
 %drumchart
 
-#F Song Form
-#B `Bars`
-#I `Instructions`
-#L `Lyrics`
-#R `Riff`
+%tag F Song Form
+%tag B Bars
+%tag I Instructions
+%tag L Lyrics
+%tag R Riff
 ---
 %map 1 F,B,I
 %map 2 L,R
